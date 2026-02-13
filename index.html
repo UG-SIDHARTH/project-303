@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine Premium 💖</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+height:100vh;
+background:linear-gradient(135deg,#ff4b6e,#ff758c);
+display:flex;
+justify-content:center;
+align-items:center;
+overflow:hidden;
+}
+
+/* Floating Hearts */
+.heart{
+position:absolute;
+color:rgba(255,255,255,0.8);
+animation:float 8s linear infinite;
+}
+
+@keyframes float{
+0%{transform:translateY(100vh);}
+100%{transform:translateY(-10vh);}
+}
+
+/* App Design */
+.app{
+width:350px;
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(20px);
+border-radius:30px;
+padding:25px;
+box-shadow:0 25px 40px rgba(0,0,0,0.3);
+text-align:center;
+color:white;
+}
+
+input,select{
+width:100%;
+padding:12px;
+margin:10px 0;
+border-radius:15px;
+border:none;
+outline:none;
+}
+
+button{
+width:100%;
+padding:12px;
+border-radius:25px;
+border:none;
+background:white;
+color:#ff4b6e;
+font-weight:bold;
+margin-top:10px;
+cursor:pointer;
+}
+
+.card{
+margin-top:20px;
+padding:15px;
+border-radius:20px;
+background:rgba(255,255,255,0.2);
+display:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+<h1>💖 Valentine Card</h1>
+
+<input type="text" id="sender" placeholder="Your Name">
+<input type="text" id="receiver" placeholder="Partner's Name">
+
+<select id="mood">
+<option value="">Select Mood</option>
+<option value="romantic">❤️ Romantic</option>
+<option value="cute">🥰 Cute</option>
+<option value="funny">😂 Funny</option>
+<option value="sorry">😔 Apology</option>
+</select>
+
+<button onclick="generateCard()">Create Card</button>
+
+<div class="card" id="card">
+<p id="message"></p>
+<button onclick="sendCard()">Send 💌</button>
+</div>
+
+<button onclick="viewCards()">View Sent Cards</button>
+
+<div class="card" id="allCards" style="display:none;"></div>
+
+</div>
+
+<script>
+/* Floating Hearts */
+for(let i=0;i<25;i++){
+let heart=document.createElement("div");
+heart.className="heart";
+heart.innerHTML="💖";
+heart.style.left=Math.random()*100+"vw";
+heart.style.fontSize=(Math.random()*20+15)+"px";
+heart.style.animationDuration=(Math.random()*5+5)+"s";
+document.body.appendChild(heart);
+}
+
+function generateCard(){
+const sender=document.getElementById("sender").value;
+const receiver=document.getElementById("receiver").value;
+const mood=document.getElementById("mood").value;
+
+if(!sender||!receiver||!mood){
+alert("Fill all fields!");
+return;
+}
+
+let text="";
+if(mood==="romantic")
+text=`My love ${receiver}, you are my forever ❤️ — ${sender}`;
+else if(mood==="cute")
+text=`${receiver}, you are my favorite human 🥰 — ${sender}`;
+else if(mood==="funny")
+text=`${receiver}, I love you more than WiFi 😂 — ${sender}`;
+else
+text=`${receiver}, I'm sorry 😔 Please forgive me — ${sender}`;
+
+document.getElementById("message").innerText=text;
+document.getElementById("card").style.display="block";
+}
+
+async function sendCard(){
+const message=document.getElementById("message").innerText;
+
+await fetch("http://localhost:5000/api/cards",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({message})
+});
+
+alert("Card Sent 💖");
+}
+
+async function viewCards(){
+const res=await fetch("http://localhost:5000/api/cards");
+const data=await res.json();
+
+let output="<h3>💌 Sent Cards</h3>";
+data.forEach(card=>{
+output+=`<p>${card.message}</p><hr>`;
+});
+
+const div=document.getElementById("allCards");
+div.innerHTML=output;
+div.style.display="block";
+}
+</script>
+
+</body>
+</html>
