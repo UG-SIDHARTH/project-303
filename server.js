@@ -22,5 +22,10 @@ app.post("/api/cards", (req, res) => {
 app.get("/api/cards", (req, res) => {
     res.json(cards);
 });
+const PORT = 5000;
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+app.listen(PORT, "0.0.0.0", () => {
+  console.log("Server running on:");
+  console.log("Local:   http://localhost:" + PORT);
+  console.log("Network: http://YOUR_IP_ADDRESS:" + PORT);
+});
